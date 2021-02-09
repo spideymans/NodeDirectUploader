@@ -78,5 +78,5 @@ app.get('/sign-s3', (req, res) => {
  */
 app.post('/save-details', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify("Request Success"));
+    res.end(JSON.stringify("File Uploaded Successfuly"));
 });
