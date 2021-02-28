@@ -27,15 +27,27 @@
 
   <select id="locality-dropdown" name="locality">
   </select>
+  <button onclick="getTime()">Get Time</button>
 
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <h2 id="datetime"></h2>
   <script>
 
     $(document).ready(function () {
       // Populate dropdown 
       populateDropdown()
     });
+
+    function getTime() { 
+      let dropdown = $('#locality-dropdown');
+      var client = new HttpClient();
+      client.get(`http://worldtimeapi.org/api/${dropdown.val()}`, function (response) {
+        response = JSON.parse(response)
+        var time = new Date(response.datetime).toLocaleString();
+        $('#datetime').text(`The time in ${dropdown.val()} is ${time}`)
+      });
+    }
 
     function populateDropdown() {
       var client = new HttpClient();
