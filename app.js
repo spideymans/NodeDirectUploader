@@ -15,6 +15,13 @@ const express = require('express');
 const aws = require('aws-sdk');
 
 /**
+ * Loads .env if not in production
+ */
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
+/**
  * Import required packages and environment vars for Twilio.
  */
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -26,8 +33,8 @@ console.log("Sending message")
 client.messages
   .create({
      body: 'This is the ship that made the Kessel Run in fourteen parsecs?',
-     from: '+15017122661',
-     to: '+15558675310'
+     from: `+${process.env.TWILIO_PHONE}`,
+     to: `+${process.env.DESTINATION_PHONE}`
    })
   .then(message => console.log(message.sid));
 
