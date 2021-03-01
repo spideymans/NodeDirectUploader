@@ -14,6 +14,24 @@
 const express = require('express');
 const aws = require('aws-sdk');
 
+/**
+ * Import required packages and environment vars for Twilio.
+ */
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = require('twilio')(accountSid, authToken);
+
+console.log("Sending message")
+
+client.messages
+  .create({
+     body: 'This is the ship that made the Kessel Run in fourteen parsecs?',
+     from: '+15017122661',
+     to: '+15558675310'
+   })
+  .then(message => console.log(message.sid));
+
+
 /*
  * Set-up and run the Express app.
  */

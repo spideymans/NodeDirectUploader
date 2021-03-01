@@ -44,8 +44,8 @@
       var client = new HttpClient();
       client.get(`http://worldtimeapi.org/api/${dropdown.val()}`, function (response) {
         response = JSON.parse(response)
-        var time = new Date(response.datetime).toLocaleString();
-        $('#datetime').text(`The time in ${dropdown.val()} is ${time}`)
+        var time = new Date(response.datetime).toString();
+        $('#datetime').text(`The time in ${dropdown.val()} is ${response.datetime}`)
       });
     }
 
