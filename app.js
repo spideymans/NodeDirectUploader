@@ -55,7 +55,7 @@ sendTime("America/Toronto")
  * Respond to GET requests to /account.
  * Upon request, render the 'account.html' web page in views/ directory.
  */
-app.get('/', (req, res) => res.render('account.html'));
+app.get('/', (req, res) => res.render('main.html'));
 
 app.get('/time-sms', (req, res) => {
   var timezone = req.query.timezone;
