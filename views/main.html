@@ -1,6 +1,8 @@
 <html>
 
 <body>
+  <h2 id="local-datetime"></h2>
+
   <select id="locality-dropdown" name="locality">
   </select>
   <button onclick="getTime()">Get Time</button>
@@ -14,7 +16,19 @@
     $(document).ready(function () {
       // Populate dropdown upon load
       populateDropdown()
+      getLocalTime()
     });
+
+    /*
+    * Gets the time in the user's detected timezone and prints it to the webpage.
+    */
+    function getLocalTime() { 
+      var client = new HttpClient();
+      client.get('https://worldtimeapi.org/api/ip', function (response) {
+        response = JSON.parse(response)
+        $('#local-datetime').text(`The time at your current location (${response.timezone}) is ${response.datetime}`)
+      });
+    }
 
     /*
     * Sends time via SMS to the default number. 
@@ -26,7 +40,6 @@
 
       var client = new HttpClient();
       client.get(`/time-sms?timezone=${selectedTimeZone}`, function (response) {
-        console.log(response)
       });
     }
 
