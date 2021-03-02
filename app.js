@@ -28,33 +28,6 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require('twilio')(accountSid, authToken);
 
-console.log("Sending message")
-sendTime()
-
-function sendTime() { 
-  // var client = new HttpClient();
-  // client.get(`http://worldtimeapi.org/api/timezone/America/Toronto`, function (response) {
-  //   response = JSON.parse(response)
-  //   console.log(response.datetime)
-  // });
-
-  require('http').get('http://worldtimeapi.org/api/timezone/America/Toronto', (res) => {
-    res.setEncoding('utf8');
-    res.on('data', function (body) {
-      const data = JSON.parse(body)
-        console.log(data);
-        client.messages
-          .create({
-            body: `The time in Toronto is: ${data.datetime}`,
-            from: `+${process.env.TWILIO_PHONE}`,
-            to: `+${process.env.DESTINATION_PHONE}`
-          })
-          .then(message => console.log(message.sid));
-
-    });
-});
-}
-
 /*
  * Set-up and run the Express app.
  */
@@ -99,7 +72,7 @@ app.get('/sign-s3', (req, res) => {
   };
 
   s3.getSignedUrl('putObject', s3Params, (err, data) => {
-    if(err){
+    if (err) {
       console.log(err);
       return res.end();
     }
@@ -118,6 +91,29 @@ app.get('/sign-s3', (req, res) => {
  * a way that suits your application.
  */
 app.post('/save-details', (req, res) => {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify("File Uploaded Successfuly"));
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify("File Uploaded Successfuly"));
 });
+
+app.post('/time-sms', (req, res) => {
+  var timezone = req.query.timezone;
+  sendTime(timezone)
+});
+
+function sendTime(timezone) {
+  require('http').get(`http://worldtimeapi.org/api/timezone/${timezone}`, (res) => {
+    res.setEncoding('utf8');
+    res.on('data', function (body) {
+      const data = JSON.parse(body)
+      console.log(data);
+      client.messages
+        .create({
+          body: `The time in Toronto is: ${data.datetime}`,
+          from: `+${process.env.TWILIO_PHONE}`,
+          to: `+${process.env.DESTINATION_PHONE}`
+        })
+        .then(message => console.log(message.sid));
+
+    });
+  });
+}
