@@ -36,7 +36,7 @@
     function getTime() {
       let dropdown = $('#locality-dropdown');
       var client = new HttpClient();
-      client.get(`http://worldtimeapi.org/api/${dropdown.val()}`, function (response) {
+      client.get(`https://worldtimeapi.org/api/${dropdown.val()}`, function (response) {
         response = JSON.parse(response)
         var time = new Date(response.datetime).toString();
         $('#datetime').text(`The time in ${dropdown.val()} is ${response.datetime}`)
@@ -48,7 +48,7 @@
      */
     function populateDropdown() {
       var client = new HttpClient();
-      client.get('http://worldtimeapi.org/api/timezone', function (response) {
+      client.get('https://worldtimeapi.org/api/timezone', function (response) {
         let dropdown = $('#locality-dropdown');
         dropdown.empty();
         dropdown.append('<option selected="true" disabled>Choose a Time Zone</option>');
