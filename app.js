@@ -54,6 +54,13 @@ const S3_BUCKET = process.env.S3_BUCKET;
  */
 app.get('/', (req, res) => res.render('main.html'));
 
+/**
+ * Respond to GET requests to /time-sms.
+ * All requests must include a timezone using the '?=timezone' query paramater.
+ * This will send the time in the defined timezone via SMS.
+ * Note: Twilio trial can only send messages to a single, predefined phone number. 
+ * Users will not be able to send SMS to arbirary phone numbers until we upgrade form Twilio trial.
+ */
 app.get('/time-sms', (req, res) => {
   var timezone = req.query.timezone;
   console.log(timezone)
