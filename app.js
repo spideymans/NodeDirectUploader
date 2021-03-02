@@ -13,7 +13,6 @@
  */
 const express = require('express');
 const aws = require('aws-sdk');
-const { time } = require('console');
 
 /**
  * Loads .env if not in production
@@ -49,11 +48,9 @@ aws.config.region = 'us-east-2';
  */
 const S3_BUCKET = process.env.S3_BUCKET;
 
-sendTime("America/Toronto")
-
 /*
- * Respond to GET requests to /account.
- * Upon request, render the 'account.html' web page in views/ directory.
+ * Respond to GET requests to /.
+ * Upon request, render the 'main.html' web page in views/ directory.
  */
 app.get('/', (req, res) => res.render('main.html'));
 
@@ -64,6 +61,13 @@ app.get('/time-sms', (req, res) => {
   res.end()
 });
 
+
+/**
+* Sends time via SMS to the default number. 
+* Note: Twilio trial can only send messages to a single, predefined phone number. 
+* Users will not be able to send SMS to arbirary phone numbers until we upgrade form Twilio trial.
+* @param {*} timezone Timezone name provided by WorldTimeAPI (string)
+*/
 function sendTime(timezone) {
   require('http').get(`http://worldtimeapi.org/api/timezone/${timezone}`, (res) => {
     res.setEncoding('utf8');

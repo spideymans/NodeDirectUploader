@@ -12,10 +12,15 @@
   <script>
 
     $(document).ready(function () {
-      // Populate dropdown 
+      // Populate dropdown upon load
       populateDropdown()
     });
 
+    /*
+    * Sends time via SMS to the default number. 
+    * Note: Twilio trial can only send messages to a single, predefined phone number. 
+    * Users will not be able to send SMS to arbirary phone numbers until we upgrade form Twilio trial.
+    */
     function sendTime() { 
       let selectedTimeZone = $('#locality-dropdown').val();
 
@@ -25,6 +30,9 @@
       });
     }
 
+    /*
+    * Gets the time from the WorldTimeAPI and prints it to the screen.
+    */
     function getTime() {
       let dropdown = $('#locality-dropdown');
       var client = new HttpClient();
@@ -35,6 +43,9 @@
       });
     }
 
+    /*
+     * Populates the timezone selection dropdown with available timezones on WorldTimeAPI.
+     */
     function populateDropdown() {
       var client = new HttpClient();
       client.get('http://worldtimeapi.org/api/timezone', function (response) {
@@ -50,6 +61,9 @@
       });
     }
 
+    /*
+     * Helper functions for Http requests.
+     */
     var HttpClient = function () {
       this.get = function (aUrl, aCallback) {
         var anHttpRequest = new XMLHttpRequest();
