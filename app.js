@@ -13,6 +13,7 @@
  */
 const express = require('express');
 const aws = require('aws-sdk');
+const { time } = require('console');
 
 /**
  * Loads .env if not in production
@@ -54,52 +55,13 @@ sendTime("America/Toronto")
  * Respond to GET requests to /account.
  * Upon request, render the 'account.html' web page in views/ directory.
  */
-app.get('/account', (req, res) => res.render('account.html'));
+app.get('/', (req, res) => res.render('account.html'));
 
-/*
- * Respond to GET requests to /sign-s3.
- * Upon request, return JSON containing the temporarily-signed S3 request and
- * the anticipated URL of the image.
- */
-app.get('/sign-s3', (req, res) => {
-  const s3 = new aws.S3();
-  const fileName = req.query['file-name'];
-  const fileType = req.query['file-type'];
-  const s3Params = {
-    Bucket: S3_BUCKET,
-    Key: fileName,
-    Expires: 60,
-    ContentType: fileType,
-    ACL: 'public-read'
-  };
-
-  s3.getSignedUrl('putObject', s3Params, (err, data) => {
-    if (err) {
-      console.log(err);
-      return res.end();
-    }
-    const returnData = {
-      signedRequest: data,
-      url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
-    };
-    res.write(JSON.stringify(returnData));
-    res.end();
-  });
-});
-
-/*
- * Respond to POST requests to /submit_form.
- * This function needs to be completed to handle the information in
- * a way that suits your application.
- */
-app.post('/save-details', (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify("File Uploaded Successfuly"));
-});
-
-app.post('/time-sms', (req, res) => {
+app.get('/time-sms', (req, res) => {
   var timezone = req.query.timezone;
+  console.log(timezone)
   sendTime(timezone)
+  res.end()
 });
 
 function sendTime(timezone) {
@@ -110,7 +72,7 @@ function sendTime(timezone) {
       console.log(data);
       client.messages
         .create({
-          body: `The time in Toronto is: ${data.datetime}`,
+          body: `The time in ${timezone} is: ${data.datetime}`,
           from: `+${process.env.TWILIO_PHONE}`,
           to: `+${process.env.DESTINATION_PHONE}`
         })
