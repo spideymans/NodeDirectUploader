@@ -48,6 +48,8 @@ aws.config.region = 'us-east-2';
  */
 const S3_BUCKET = process.env.S3_BUCKET;
 
+sendTime("America/Toronto")
+
 /*
  * Respond to GET requests to /account.
  * Upon request, render the 'account.html' web page in views/ directory.
