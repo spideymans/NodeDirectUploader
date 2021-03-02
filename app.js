@@ -29,15 +29,31 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require('twilio')(accountSid, authToken);
 
 console.log("Sending message")
+sendTime()
 
-client.messages
-  .create({
-     body: 'This is the ship that made the Kessel Run in fourteen parsecs?',
-     from: `+${process.env.TWILIO_PHONE}`,
-     to: `+${process.env.DESTINATION_PHONE}`
-   })
-  .then(message => console.log(message.sid));
+function sendTime() { 
+  // var client = new HttpClient();
+  // client.get(`http://worldtimeapi.org/api/timezone/America/Toronto`, function (response) {
+  //   response = JSON.parse(response)
+  //   console.log(response.datetime)
+  // });
 
+  require('http').get('http://worldtimeapi.org/api/timezone/America/Toronto', (res) => {
+    res.setEncoding('utf8');
+    res.on('data', function (body) {
+      const data = JSON.parse(body)
+        console.log(data);
+        client.messages
+          .create({
+            body: `The time in Toronto is: ${data.datetime}`,
+            from: `+${process.env.TWILIO_PHONE}`,
+            to: `+${process.env.DESTINATION_PHONE}`
+          })
+          .then(message => console.log(message.sid));
+
+    });
+});
+}
 
 /*
  * Set-up and run the Express app.
