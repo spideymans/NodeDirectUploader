@@ -1,0 +1,95 @@
+<html>
+
+<body>
+  <h2 id="local-datetime"></h2>
+
+  <select id="locality-dropdown" name="locality">
+  </select>
+  <button onclick="getTime()">Get Time</button>
+  <button onclick="sendTime()">Send Time via SMS</button>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <h2 id="datetime"></h2>
+  <script>
+
+    $(document).ready(function () {
+      // Populate dropdown upon load
+      populateDropdown()
+      getLocalTime()
+    });
+
+    /*
+    * Gets the time in the user's detected timezone and prints it to the webpage.
+    */
+    function getLocalTime() { 
+      var client = new HttpClient();
+      client.get('https://worldtimeapi.org/api/ip', function (response) {
+        response = JSON.parse(response)
+        $('#local-datetime').text(`The time at your current location (${response.timezone}) is ${response.datetime}`)
+      });
+    }
+
+    /*
+    * Sends time via SMS to the default number. 
+    * Note: Twilio trial can only send messages to a single, predefined phone number. 
+    * Users will not be able to send SMS to arbirary phone numbers until we upgrade form Twilio trial.
+    */
+    function sendTime() { 
+      let selectedTimeZone = $('#locality-dropdown').val();
+
+      var client = new HttpClient();
+      client.get(`/time-sms?timezone=${selectedTimeZone}`, function (response) {
+      });
+    }
+
+    /*
+    * Gets the time from the WorldTimeAPI and prints it to the screen.
+    */
+    function getTime() {
+      let dropdown = $('#locality-dropdown');
+      var client = new HttpClient();
+      client.get(`https://worldtimeapi.org/api/${dropdown.val()}`, function (response) {
+        response = JSON.parse(response)
+        var time = new Date(response.datetime).toString();
+        $('#datetime').text(`The time in ${dropdown.val()} is ${response.datetime}`)
+      });
+    }
+
+    /*
+     * Populates the timezone selection dropdown with available timezones on WorldTimeAPI.
+     */
+    function populateDropdown() {
+      var client = new HttpClient();
+      client.get('https://worldtimeapi.org/api/timezone', function (response) {
+        let dropdown = $('#locality-dropdown');
+        dropdown.empty();
+        dropdown.append('<option selected="true" disabled>Choose a Time Zone</option>');
+        dropdown.prop('selectedIndex', 0);
+
+        response = JSON.parse(response)
+        $.each(response, function (key, entry) {
+          dropdown.append($('<option></option>').attr('value', entry).text(entry));
+        })
+      });
+    }
+
+    /*
+     * Helper functions for Http requests.
+     */
+    var HttpClient = function () {
+      this.get = function (aUrl, aCallback) {
+        var anHttpRequest = new XMLHttpRequest();
+        anHttpRequest.onreadystatechange = function () {
+          if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+            aCallback(anHttpRequest.responseText);
+        }
+
+        anHttpRequest.open("GET", aUrl, true);
+        anHttpRequest.send(null);
+      }
+    }
+  </script>
+</body>
+
+</html>
